@@ -78,7 +78,7 @@ public class ThreadedSearch<T> implements Searcher<T>, Runnable {
     }
 
     public void run() {
-
+    }
 
     private class Answer {
         private boolean answer = false;
