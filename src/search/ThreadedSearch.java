@@ -50,34 +50,45 @@ public class ThreadedSearch<T> implements Searcher<T>, Runnable {
          * in the shared `Answer` instance.
          */
 
-        //Setup for new answer
+        /* Setup for new answer */
         Answer sharedAnswer = new Answer();
 
-        //Setup for new thread
+        /* Setup for new thread */
         Thread[] newThread = new Thread[numThreads];
 
         /* for loop that divides the list size by number of threads so that each thread has a different
         *  begining and end.
         */
         for (int i=0; i<numThreads; i++){
-            int begin = (list.size() * i) / numThreads;
-            int end = (list.size() * (i+1) / numThreads);
+            int begin = (int)Math.floor((list.size() * i) / numThreads);
+            int end = (int)Math.floor(list.size() * (i+1) / numThreads);
             ThreadedSearch<T> ThreadSearch = new ThreadedSearch<>(target, list, begin, end);
-            //creates a new thread
+            /* creates a new thread */
             newThread[i] = new Thread(ThreadSearch);
-            //Starts a new thread
+            /* Starts a new thread */
             newThread[i].start();
         }
 
-        //Puts threads on wait until the time is right.
+        /* Puts threads on wait until the time is right. */
         for (int i = 0; i < numThreads; i++) {
             newThread[i].join();
         }
-        //this is what we want
+        /* This is what we want */
         return sharedAnswer.getAnswer();
     }
 
     public void run() {
+        for (int i = begin; i < end; i++) {
+            //If the answer has already been found break;
+            if(answer.getAnswer()){
+                break;
+            }
+            //If not then set the answer
+            if (list.get(i).equals(target)){
+                answer.setAnswer(true);
+            }
+        }
+    }
     }
 
     private class Answer {
